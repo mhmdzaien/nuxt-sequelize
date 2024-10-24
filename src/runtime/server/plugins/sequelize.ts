@@ -14,7 +14,7 @@ import { defineNitroPlugin } from 'nitropack/dist/runtime/plugin'
 // import { initModels } from '../models'
 
 let _sequelize: Sequelize
-let _queryGenerator: any
+let _queryGenerator: unknown
 let _builder: Knex
 
 const createConnection = () => {
@@ -59,7 +59,7 @@ const methodToQueryTypes: { [key: string]: QueryTypes } = {
 }
 
 knex.QueryBuilder.extend('sequelizeWhere', function (where: WhereOptions) {
-  const sql = _queryGenerator.whereQuery(where) as string
+  const sql = _queryGenerator?.whereQuery(where) as string
   this.where(_builder.raw(sql.replace('WHERE', '')))
   return this
 })
@@ -104,5 +104,5 @@ export const runQuery = async <T extends QueryTypes>(
       },
       options,
     ),
-  ) as any
+  )
 }

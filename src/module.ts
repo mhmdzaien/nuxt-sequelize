@@ -3,12 +3,13 @@ import {
   addPlugin,
   createResolver,
   addServerImportsDir,
-  addServerPlugin
+  addServerPlugin,
 } from '@nuxt/kit'
+import type { Sequelize } from 'sequelize'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
-  
+  initModel: (sequelize: Sequelize) => void
 }
 
 export default defineNuxtModule<ModuleOptions>({
