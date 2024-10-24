@@ -11,31 +11,37 @@ import defu from 'defu'
 import type { Knex } from 'knex'
 import knex from 'knex'
 import { defineNitroPlugin } from 'nitropack/dist/runtime/plugin'
-import { useRuntimeConfig } from '@nuxt/kit'
-// import { initModels } from '../models'
+import { getHeader } from 'h3'
+import type { QueryGenerator, RawQueryResult } from '../types'
+import { mySequelizeModelLoad } from '#my-sequelize-options'
 
-let _sequelize: Sequelize
-let _queryGenerator: unknown
+let _queryGenerator: QueryGenerator
 let _builder: Knex
+const _connection: { [key: string]: Sequelize } = {}
 
-const createConnection = () => {
-  return new Sequelize({
-    dialect: 'mysql',
-    host: process.env.DB_HOST,
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    port: Number(process.env.DB_PORT ?? '3306'),
-    // logging: false,
-  })
+const createConnection = (identifier?: string) => {
+  if (!_connection[identifier]) {
+    _connection[identifier] = new Sequelize({
+      dialect: 'mysql',
+      host: process.env.DB_HOST,
+      username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      port: Number(process.env.DB_PORT ?? '3306'),
+      // logging: false,
+    })
+  }
+  _builder = knex({ client: _connection[identifier].getDialect() })
+  _queryGenerator = _connection[identifier].getQueryInterface().queryGenerator as QueryGenerator
+  return _connection[identifier]
 }
 
 const multiTenantDb = (nitroApp: NitroApp) => {
   nitroApp.hooks.hook('request', (event) => {
     const tenantId = getHeader(event, 'tenant')
-    const connection = createConnection()
+    const connection = createConnection(tenantId)
     event.context.sequelize = connection
-    // initModels(connection)
+    mySequelizeModelLoad(connection)
   })
   nitroApp.hooks.hook('afterResponse', (event) => {
     event.context.sequelize?.close()
@@ -43,18 +49,20 @@ const multiTenantDb = (nitroApp: NitroApp) => {
 }
 
 export default defineNitroPlugin((nitroApp: NitroApp) => {
-  _sequelize = createConnection()
-  _builder = knex({ client: _sequelize.getDialect() })
-  _queryGenerator = _sequelize.getQueryInterface().queryGenerator
-
-  console.log('testOption', useRuntimeConfig().pluginOption)
-//   initModels(_sequelize)
-  nitroApp.hooks.hook('request', (event) => {
-    event.context.sequelize = _sequelize
-  })
+  const moduleOptions = { enabledMultitenant: false }
+  if (moduleOptions.enabledMultitenant) {
+    multiTenantDb(nitroApp)
+  }
+  else {
+    const connection = createConnection('default')
+    nitroApp.hooks.hook('request', (event) => {
+      mySequelizeModelLoad(connection)
+      event.context.sequelize = connection
+    })
+  }
 })
 
-const methodToQueryTypes: { [key: string]: QueryTypes } = {
+const methodToQueryTypes = {
   select: QueryTypes.SELECT,
   update: QueryTypes.UPDATE,
   insert: QueryTypes.INSERT,
@@ -88,24 +96,17 @@ export const raw = (
 export const runQuery = async <T extends QueryTypes>(
   query: (builder: Knex) => Knex.QueryBuilder,
   options?: QueryOptions,
-): Promise<
-  T extends QueryTypes.SELECT
-    ? unknown[]
-    : T extends QueryTypes.INSERT
-      ? [number, number]
-      : T extends QueryTypes.UPDATE
-        ? [undefined, number]
-        : void
-> => {
+): Promise<RawQueryResult<T>> => {
   const sql = query(_builder).toSQL()
+  const queryType = methodToQueryTypes[sql.method]
   return _sequelize.query(
     sql.sql,
     defu(
       {
         replacements: sql.bindings as [],
-        type: methodToQueryTypes[sql.method] ?? QueryTypes.SELECT,
+        type: queryType ?? QueryTypes.SELECT,
       },
       options,
     ),
-  )
+  ) as unknown as RawQueryResult<typeof queryType>
 }

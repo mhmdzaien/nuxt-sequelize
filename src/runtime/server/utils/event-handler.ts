@@ -69,19 +69,19 @@ export const defineMyEventHandler = <T extends EventHandlerRequest, D>(
       }
       else if (
         Array.isArray(authorizeRequest)
-        && !authorizeRequest.includes(decodedToken!.role)
+        && !authorizeRequest.includes(decodedToken!.role as number)
       ) {
         throw {
           statusCode: 403,
           message: 'Anda tidak memiliki akse ke fitur ini',
         }
       }
-      return await handler(event)
+      return await handler(event as MyH3Event<T>)
     }
-    catch (err: any) {
+    catch (err) {
       setResponseStatus(event, err.statusCode ?? 500)
       if (err.statusCode === 422) {
-        err.data = err.data?.reduce((validation: any, row: ZodIssue) => {
+        err.data = err.data?.reduce((validation: object, row: ZodIssue) => {
           const key = row.path.join('.') as string
           return { ...validation, ...{ [key]: row.message } }
         }, {})

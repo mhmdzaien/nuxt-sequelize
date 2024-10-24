@@ -1,79 +1,77 @@
-import defu from "defu";
-import type { H3Event, EventHandlerRequest } from "h3";
-import type { ZodTypeAny } from "zod";
-
-interface BodyData {
-  [key: string]: any;
-  getFile: (name: string) => {
-    filename: string;
-    type: string;
-    data: Buffer;
-  };
-  toJson: () => any;
-}
+import defu from 'defu'
+import { type H3Event, type EventHandlerRequest, readFormData, readBody, createError, readMultipartFormData } from 'h3'
+import type { ZodTypeAny } from 'zod'
 
 export const useValidatedBody = async (
   event: H3Event<EventHandlerRequest>,
-  zodSchema: ZodTypeAny | false
-): Promise<any> => {
-  const checkBody = await readBody(event);
+  zodSchema: ZodTypeAny | false,
+): Promise<unknown> => {
+  const checkBody = await readBody(event)
   if (!checkBody) {
     throw createError({
       statusCode: 400,
-      statusMessage: "Terdapat Kesalahan pada data yang dikirim",
-    });
+      statusMessage: 'Terdapat Kesalahan pada data yang dikirim',
+    })
   }
-  const contentType = event.headers.get("content-type")?.toLowerCase();
-  let body;
+  const contentType = event.headers.get('content-type')?.toLowerCase()
+  let body
   switch (true) {
-    case contentType === "application/x-www-form-urlencoded":
-      body = Object.fromEntries(await readFormData(event));
-      break;
-    case contentType === "application/json":
-      body = await readBody(event);
-      break;
-    case contentType?.startsWith("multipart/form-data"):
-      body = Object.fromEntries(await readFormData(event)) as any;
+    case contentType === 'application/x-www-form-urlencoded':{
+      const formData = await readFormData(event) as unknown as Iterable<[unknown, FormDataEntryValue]>
+      body = Object.fromEntries(formData)
+      break
+    }
+    case contentType === 'application/json':
+      body = await readBody(event)
+      break
+    case contentType?.startsWith('multipart/form-data'): {
+      const formData = await readFormData(event) as unknown as Iterable<[unknown, FormDataEntryValue]>
+      body = Object.fromEntries(formData)
       if (body.bodyJson) {
         try {
-          body = defu(body, JSON.parse(body.bodyJson));
-          delete body.bodyJson;
-        } catch (err) {
-          console.log(err);
+          body = defu(body, JSON.parse(body.bodyJson))
+          delete body.bodyJson
+        }
+        catch (err) {
+          console.log(err)
         }
       }
-      const multipartBody = await readMultipartFormData(event);
+      const multipartBody = await readMultipartFormData(event)
       const files = multipartBody?.reduce((result, current) => {
         if (current.type)
-          return { ...result, ...{ [current?.name!]: current } };
-        else return result;
-      }, {});
-      body._multipartBody = files;
-      break;
-    default:
-      body = Object.fromEntries(await readFormData(event));
-      break;
-  }
-  if (zodSchema !== false) {
-    const result = await zodSchema.safeParseAsync(body);
-    if (result.success) {
-      if (body._multipartBody) {
-        result.data._multipartBody = body._multipartBody;
-        result.data.getFile = function (name: string): File {
-          return this._multipartBody[name] ?? null;
-        };
-        result.data.hasFile = function (name: string): boolean {
-          return Object.keys(this._multipartBody).includes(name);
-        };
-      }
-      return result.data;
-    } else {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "Terdapat Kesalahan Pada Isian",
-        data: result.error.issues,
-      });
+          return { ...result, ...{ [current.name]: current } }
+        else return result
+      }, {})
+      body._multipartBody = files
+      break
+    }
+    default:{
+      const formData = await readFormData(event) as unknown as Iterable<[unknown, FormDataEntryValue]>
+      body = Object.fromEntries(formData)
+      break
     }
   }
-  return body;
-};
+  if (zodSchema !== false) {
+    const result = await zodSchema.safeParseAsync(body)
+    if (result.success) {
+      if (body._multipartBody) {
+        result.data._multipartBody = body._multipartBody
+        result.data.getFile = function (name: string): File {
+          return this._multipartBody[name] ?? null
+        }
+        result.data.hasFile = function (name: string): boolean {
+          return Object.keys(this._multipartBody).includes(name)
+        }
+      }
+      return result.data
+    }
+    else {
+      throw createError({
+        statusCode: 422,
+        statusMessage: 'Terdapat Kesalahan Pada Isian',
+        data: result.error.issues,
+      })
+    }
+  }
+  return body
+}

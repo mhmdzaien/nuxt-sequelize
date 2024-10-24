@@ -1,6 +1,8 @@
-import type { EventHandlerRequest, H3Event } from "h3";
-import { FindAttributeOptions, Op, Order, Sequelize } from "sequelize";
-import { parse } from "qs";
+import { type EventHandlerRequest, type H3Event, getRequestURL } from 'h3'
+import type { Order } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
+import { parse } from 'qs'
+import type { FilterQuery } from '../types'
 
 const mapsOperator: { [key: string]: symbol } = {
   contain: Op.substring,
@@ -15,38 +17,40 @@ const mapsOperator: { [key: string]: symbol } = {
   notIn: Op.notIn,
   or: Op.or,
   and: Op.and,
-};
+}
 
-export const toSequelizeOp = (options: any): any => {
+export const toSequelizeOp = (options: Array<string> | object): object => {
   if (Array.isArray(options)) {
     options.forEach((val, index) => {
-      options[index] = toSequelizeOp(val);
-    });
-    return options;
-  } else if (typeof options === "object") {
+      options[index] = toSequelizeOp(val)
+    })
+    return options
+  }
+  else if (typeof options === 'object') {
     return Object.fromEntries(
       Object.entries(options).map(([k, v]) => {
         if (mapsOperator[k]) {
-          return [mapsOperator[k], toSequelizeOp(v)];
-        } else if (typeof v === "object") {
-          const col = k.split(".").length > 1 ? `$${k}$` : k;
-          return [col, toSequelizeOp(v)];
+          return [mapsOperator[k], toSequelizeOp(v)]
         }
-        const col = k.split(".").length > 1 ? `$${k}$` : k;
-        return [col, v];
-      })
-    );
+        else if (typeof v === 'object') {
+          const col = k.split('.').length > 1 ? `$${k}$` : k
+          return [col, toSequelizeOp(v)]
+        }
+        const col = k.split('.').length > 1 ? `$${k}$` : k
+        return [col, v]
+      }),
+    )
   }
-  return options;
-};
+  return options
+}
 
-export const useQuery = (event: H3Event<EventHandlerRequest>): any => {
-  const query = getRequestURL(event).search;
+export const useQuery = (event: H3Event<EventHandlerRequest>): FilterQuery => {
+  const query = getRequestURL(event).search
   if (query) {
-    return parse(query, { ignoreQueryPrefix: true });
+    return parse(query, { ignoreQueryPrefix: true })
   }
-  return {};
-};
+  return {}
+}
 
 export const useGridParam = (event: H3Event<EventHandlerRequest>) => {
   const {
@@ -57,37 +61,30 @@ export const useGridParam = (event: H3Event<EventHandlerRequest>) => {
     sortBy,
     sortType,
     attributes,
-  }: {
-    page: string;
-    rowsPerPage?: string;
-    where?: any;
-    search?: any;
-    sortBy?: string;
-    sortType?: string;
-    attributes?: FindAttributeOptions;
-  } = useQuery(event);
-  const whereQuery = [];
+  }: FilterQuery = useQuery(event)
+  const whereQuery = []
   if (where) {
-    whereQuery.push(toSequelizeOp(where));
+    whereQuery.push(toSequelizeOp(where))
   }
   if (search) {
-    whereQuery.push({ [Op.or]: toSequelizeOp(search) });
+    whereQuery.push({ [Op.or]: toSequelizeOp(search) })
   }
-  let order: Order | undefined;
+  let order: Order | undefined
   if (sortBy && sortType) {
-    if (sortBy.split(".").length > 0) {
-      order = [[Sequelize.literal(sortBy), sortType]];
-    } else {
-      order = [[sortBy, sortType]];
+    if (sortBy.split('.').length > 0) {
+      order = [[Sequelize.literal(sortBy), sortType]]
+    }
+    else {
+      order = [[sortBy, sortType]]
     }
   }
-  const limit = rowsPerPage == "-1" ? undefined : Number(rowsPerPage ?? 10);
-  const offset = Number(rowsPerPage ?? 10) * (Number(page ?? 1) - 1);
+  const limit = rowsPerPage == '-1' ? undefined : Number(rowsPerPage ?? 10)
+  const offset = Number(rowsPerPage ?? 10) * (Number(page ?? 1) - 1)
   return {
     limit,
     offset,
     order,
     attributes,
     where: { [Op.and]: whereQuery },
-  };
-};
+  }
+}

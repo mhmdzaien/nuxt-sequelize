@@ -1,10 +1,11 @@
-import { initModels } from './server/models'
-
 export default defineNuxtConfig({
   modules: ['../src/module'],
   devtools: { enabled: true },
+  runtimeConfig: {
+  },
   compatibilityDate: '2024-10-24',
   mySequelize: {
-    initModel: initModels,
+    modelInitiator: 'initModels',
+    modelPath: './server/models',
   },
 })

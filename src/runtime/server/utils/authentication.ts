@@ -1,8 +1,8 @@
-import { useRuntimeConfig } from '@nuxt/kit'
 import { compare, genSaltSync, hashSync } from 'bcrypt'
 import { type H3Event, type EventHandlerRequest, setCookie, createError } from 'h3'
 import jwt, { type JwtPayload } from 'jsonwebtoken'
 import { v4 as uuidv4 } from 'uuid'
+import { mySequelizeOptions } from '#my-sequelize-options'
 
 export const hashPassword = (password: string) => {
   const salt = genSaltSync(10)
@@ -34,8 +34,8 @@ const {
   jwtAccessSecret,
   jwtRefreshSecret,
   accessTokenLifeTime,
-  public: publicConfig,
-} = useRuntimeConfig()
+  cookieLifeTime,
+} = mySequelizeOptions
 
 export const encodeAccessToken = (
   userPayload: UserPayload,
@@ -53,12 +53,12 @@ export const encodeAccessToken = (
       unitId: userPayload.unitId,
     },
   }
-  const token = jwt.sign(payload, jwtAccessSecret as string, {
-    expiresIn: accessTokenLifeTime,
+  const token = jwt.sign(payload, (jwtAccessSecret ?? 'no-key') as string, {
+    expiresIn: (accessTokenLifeTime ?? 60),
   })
   if (attachOnCookie && event) {
     setCookie(event, 'accessToken', token, {
-      expires: new Date(Date.now() + publicConfig.cookieLifeTime * 1000),
+      expires: new Date(Date.now() + (cookieLifeTime ?? 60) * 1000),
     })
   }
   else if (attachOnCookie === true && !event) {
@@ -76,8 +76,8 @@ export const encodeRefreshToken = (userId: string) => {
       jwtId: uuidv4(),
       userId: userId,
     },
-    jwtRefreshSecret as string,
-    { expiresIn: publicConfig.cookieLifeTime },
+    (jwtRefreshSecret ?? 'no-key') as string,
+    { expiresIn: (cookieLifeTime ?? 60) },
   )
 }
 
@@ -88,7 +88,7 @@ export const verifyToken = async (
   try {
     const decodeToken = jwt.verify(
       token,
-      type === 'access' ? jwtAccessSecret : jwtRefreshSecret,
+      type === 'access' ? (jwtAccessSecret ?? 'no-key') : (jwtRefreshSecret ?? 'no-key'),
     ) as AccessTokenPayload
     if (import.meta.server && process.env.REDIS_HOST) {
       if (await useStorage('redis').hasItem(decodeToken.jwtId)) {
