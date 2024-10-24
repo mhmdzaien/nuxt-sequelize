@@ -22,6 +22,8 @@ export default defineNuxtModule<ModuleOptions>({
   setup(_options, _nuxt) {
     const resolver = createResolver(import.meta.url)
 
+
+    _nuxt.options.runtimeConfig.pluginOption = _options
     // Do not add the extension since the `.ts` will be transpiled to `.mjs` after `npm run prepack`
     addPlugin(resolver.resolve('./runtime/plugin'))
     addServerPlugin(resolver.resolve('./runtime/server/plugins/sequelize'))

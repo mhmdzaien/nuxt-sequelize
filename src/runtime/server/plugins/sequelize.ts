@@ -11,6 +11,7 @@ import defu from 'defu'
 import type { Knex } from 'knex'
 import knex from 'knex'
 import { defineNitroPlugin } from 'nitropack/dist/runtime/plugin'
+import { useRuntimeConfig } from '@nuxt/kit'
 // import { initModels } from '../models'
 
 let _sequelize: Sequelize
@@ -45,6 +46,8 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
   _sequelize = createConnection()
   _builder = knex({ client: _sequelize.getDialect() })
   _queryGenerator = _sequelize.getQueryInterface().queryGenerator
+
+  console.log('testOption', useRuntimeConfig().pluginOption)
 //   initModels(_sequelize)
   nitroApp.hooks.hook('request', (event) => {
     event.context.sequelize = _sequelize
