@@ -1,13 +1,13 @@
 import defu from 'defu'
-import type { Knex } from 'knex'
 import type { Sequelize, QueryOptions, Order, WhereOptions } from 'sequelize'
 import { QueryTypes } from 'sequelize'
+import type { Knex } from 'knex'
 import knex from 'knex'
-import type { QueryGenerator, RawQueryResult } from '../types'
+import type { KnexSequelize, QueryGenerator, RawQueryResult, } from '../../types'
 
 let _sequelize: Sequelize
 let _queryGenerator: QueryGenerator
-let _builder: Knex
+let _builder: KnexSequelize
 
 const methodToQueryTypes: { [key: string]: string } = {
   select: QueryTypes.SELECT,
@@ -34,7 +34,7 @@ knex.QueryBuilder.extend('sequelizeOrder', function (order?: Order) {
 
 export const initConnection = (connection: Sequelize) => {
   _sequelize = connection
-  _builder = knex({ client: connection.getDialect() })
+  _builder = knex({ client: connection.getDialect() }) as KnexSequelize
   _queryGenerator = connection.getQueryInterface().queryGenerator as QueryGenerator
 }
 
@@ -47,7 +47,7 @@ export const raw = (
 }
 
 export const runQuery = async <T extends QueryTypes>(
-  query: (builder: Knex) => Knex.QueryBuilder,
+  query: (builder: KnexSequelize) => Knex.QueryBuilder,
   options?: QueryOptions,
 ): Promise<RawQueryResult<T>> => {
   const sql = query(_builder).toSQL()

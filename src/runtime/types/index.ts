@@ -1,12 +1,13 @@
-import type { FindAttributeOptions, FindOptions, Model, ModelStatic, QueryTypes, TableName, WhereOptions } from 'sequelize'
+import type { Knex } from 'knex'
+import type { FindAttributeOptions, FindOptions, Model, ModelStatic, Order, QueryTypes, TableName, WhereOptions } from 'sequelize'
 
-type SelectOptions<M extends Model> = FindOptions<M> & {
-  model: ModelStatic<M>
+export type KnexSequelize = Knex & {
+  sequelizeOrder(order?: Order): KnexSequelize
+  sequelizeWhere(where?: WhereOptions): KnexSequelize
 }
-
 export interface QueryGenerator {
   whereQuery(where: WhereOptions): string
-  selectQuery<M extends Model>(tableName: TableName, options?: SelectOptions<M>, model?: ModelStatic<M>): string
+  selectQuery<M extends Model>(tableName: TableName, options?: FindOptions, model?: ModelStatic<M>): string
 }
 
 export interface FilterQuery {
