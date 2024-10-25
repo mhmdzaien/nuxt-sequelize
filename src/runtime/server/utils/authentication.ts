@@ -42,7 +42,7 @@ export const encodeAccessToken = (
   attachOnCookie?: boolean,
   event?: H3Event<EventHandlerRequest>,
 ) => {
-  const payload: AccessTokenPayload = {
+  const payload = {
     jwtId: uuidv4(),
     ...{
       id: userPayload.id,
