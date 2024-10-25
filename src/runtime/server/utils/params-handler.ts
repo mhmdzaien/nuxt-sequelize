@@ -5,18 +5,18 @@ import { parse } from 'qs'
 import type { FilterQuery } from '../types'
 
 const mapsOperator: { [key: string]: symbol } = {
-  contain: Op.substring,
-  is: Op.is,
-  eq: Op.eq,
-  ne: Op.ne,
-  gt: Op.gt,
-  gte: Op.gte,
-  lt: Op.lt,
-  lte: Op.lte,
-  in: Op.in,
-  notIn: Op.notIn,
-  or: Op.or,
-  and: Op.and,
+  contain: Op.substring as symbol,
+  is: Op.is as symbol,
+  eq: Op.eq as symbol,
+  ne: Op.ne as symbol,
+  gt: Op.gt as symbol,
+  gte: Op.gte as symbol,
+  lt: Op.lt as symbol,
+  lte: Op.lte as symbol,
+  in: Op.in as symbol,
+  notIn: Op.notIn as symbol,
+  or: Op.or as symbol,
+  and: Op.and as symbol,
 }
 
 export const toSequelizeOp = (options: Array<string> | object): object => {
@@ -67,7 +67,7 @@ export const useGridParam = (event: H3Event<EventHandlerRequest>) => {
     whereQuery.push(toSequelizeOp(where))
   }
   if (search) {
-    whereQuery.push({ [Op.or]: toSequelizeOp(search) })
+    whereQuery.push({ [Op.or as symbol]: toSequelizeOp(search) })
   }
   let order: Order | undefined
   if (sortBy && sortType) {
@@ -85,6 +85,6 @@ export const useGridParam = (event: H3Event<EventHandlerRequest>) => {
     offset,
     order,
     attributes,
-    where: { [Op.and]: whereQuery },
+    where: { [Op.and as symbol]: whereQuery },
   }
 }

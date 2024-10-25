@@ -1,24 +1,14 @@
 import type {
-  Dialect,
-  Order,
-  QueryOptions,
-  WhereOptions } from 'sequelize'
+  Dialect } from 'sequelize'
 import {
   Sequelize,
-  QueryTypes,
 } from 'sequelize'
 import type { NitroApp } from 'nitropack'
-import defu from 'defu'
-import type { Knex } from 'knex'
-import knex from 'knex'
 import { defineNitroPlugin } from 'nitropack/dist/runtime/plugin'
 import { getHeader } from 'h3'
-import type { QueryGenerator, RawQueryResult } from '../types'
+import { initConnection } from '../utils/knex-utils'
 import { mySequelizeModelLoad } from '#my-sequelize-options'
 
-let _sequelize: Sequelize
-let _queryGenerator: QueryGenerator
-let _builder: Knex
 const _connection: { [key: string]: Sequelize } = {}
 
 const createConnection = (identifier: string) => {
@@ -33,9 +23,7 @@ const createConnection = (identifier: string) => {
       // logging: false,
     })
   }
-  _sequelize = _connection[identifier]
-  _builder = knex({ client: _connection[identifier].getDialect() })
-  _queryGenerator = _connection[identifier].getQueryInterface().queryGenerator as QueryGenerator
+  initConnection(_connection[identifier])
   return _connection[identifier]
 }
 
@@ -64,52 +52,3 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
     })
   }
 })
-
-const methodToQueryTypes = {
-  select: QueryTypes.SELECT,
-  update: QueryTypes.UPDATE,
-  insert: QueryTypes.INSERT,
-  delete: QueryTypes.DELETE,
-}
-
-knex.QueryBuilder.extend('sequelizeWhere', function (where: WhereOptions) {
-  const sql = _queryGenerator?.whereQuery(where) as string
-  this.where(_builder.raw(sql.replace('WHERE', '')))
-  return this
-})
-
-knex.QueryBuilder.extend('sequelizeOrder', function (order?: Order) {
-  if (order) {
-    const sql = _queryGenerator
-      .selectQuery('DUMP', { order: order })
-      .replace(';', '') as string
-    this.orderByRaw(_builder.raw(sql.split('ORDER BY').at(1)!))
-  }
-  return this
-})
-
-export const raw = (
-  sql: string,
-  bindings?: Knex.RawBinding[] | Knex.ValueDict,
-) => {
-  if (bindings) return _builder.raw(sql, bindings)
-  return _builder.raw(sql)
-}
-
-export const runQuery = async <T extends QueryTypes>(
-  query: (builder: Knex) => Knex.QueryBuilder,
-  options?: QueryOptions,
-): Promise<RawQueryResult<T>> => {
-  const sql = query(_builder).toSQL()
-  const queryType = methodToQueryTypes[sql.method]
-  return _sequelize.query(
-    sql.sql,
-    defu(
-      {
-        replacements: sql.bindings as [],
-        type: queryType ?? QueryTypes.SELECT,
-      },
-      options,
-    ),
-  ) as unknown as RawQueryResult<typeof queryType>
-}

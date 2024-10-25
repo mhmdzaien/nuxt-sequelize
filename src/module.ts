@@ -31,12 +31,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   async setup(_options, nuxt) {
     const resolver = createResolver(import.meta.url)
-    const modelResolver = createResolver(nuxt.options.srcDir)
-
-    // nuxt.options.alias['#color-mode-options'] = addTemplate({
-    //   filename: 'color-mode-options.mjs',
-    //   getContents: () => `export const ujiCoba = 'test'`,
-    // }).dst
+    const modelResolver = createResolver(nuxt.options.rootDir)
 
     nuxt.hook('nitro:config', (config) => {
       if (!config.virtual) {

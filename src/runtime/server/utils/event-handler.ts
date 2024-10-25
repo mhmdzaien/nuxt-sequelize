@@ -23,7 +23,7 @@ interface MyH3EventContext extends H3EventContext {
   sequelize: Sequelize
 }
 
-interface MyH3Event<T> extends H3Event<T> {
+interface MyH3Event<T extends EventHandlerRequest> extends H3Event<T> {
   context: MyH3EventContext
 }
 interface MyEventHandler<

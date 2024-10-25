@@ -1,8 +1,12 @@
-import type { FindAttributeOptions, QueryTypes, WhereOptions } from 'sequelize'
+import type { FindAttributeOptions, FindOptions, Model, ModelStatic, QueryTypes, TableName, WhereOptions } from 'sequelize'
+
+type SelectOptions<M extends Model> = FindOptions<M> & {
+  model: ModelStatic<M>
+}
 
 export interface QueryGenerator {
-  whereQuery(where: WhereOptions)
-  selectQuery(tableName, options?, model?): string
+  whereQuery(where: WhereOptions): string
+  selectQuery<M extends Model>(tableName: TableName, options?: SelectOptions<M>, model?: ModelStatic<M>): string
 }
 
 export interface FilterQuery {

@@ -39,7 +39,7 @@ export const useValidatedBody = async (
       const multipartBody = await readMultipartFormData(event)
       const files = multipartBody?.reduce((result, current) => {
         if (current.type)
-          return { ...result, ...{ [current.name]: current } }
+          return { ...result, ...{ [current.name!]: current } }
         else return result
       }, {})
       body._multipartBody = files
