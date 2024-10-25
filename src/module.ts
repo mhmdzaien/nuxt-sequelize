@@ -18,8 +18,8 @@ export interface ModuleOptions {
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: 'my-sequelize',
-    configKey: 'mySequelize',
+    name: '@mhmdzaien/nuxt-sequelize',
+    configKey: 'nuxtSequelize',
   },
   // Default configuration options of the Nuxt module
   defaults: {},

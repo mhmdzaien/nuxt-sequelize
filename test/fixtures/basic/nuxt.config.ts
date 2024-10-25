@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   modules: [
     MyModule,
   ],
-  mySequelize: {
+  nuxtSequelize: {
     modelInitiator: 'initModels',
     modelPath: '../../../playground/server/models',
   },

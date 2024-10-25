@@ -32,7 +32,7 @@ Nuxt module to integrate sequelize and model at server api
 Install the module to your Nuxt application with one command:
 
 ```bash
-npx nuxi module add my-module
+npx nuxi module add nuxt-sequelize
 ```
 
 That's it! You can now use My Module in your Nuxt app ✨

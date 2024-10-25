@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
   },
   compatibilityDate: '2024-10-24',
-  mySequelize: {
+  nuxtSequelize: {
     modelInitiator: 'initModels',
     modelPath: './server/models',
   },
