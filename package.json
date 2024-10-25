@@ -1,7 +1,7 @@
 {
-  "name": "my-sequelize",
+  "name": "@mhmdzaien/nuxt-sequelize",
   "version": "1.0.2",
-  "description": "My sequelize nuxt module",
+  "description": "sequelize nuxt module",
   "repository": "mhmdzaien/nuxt-sequelize",
   "license": "MIT",
   "type": "module",
