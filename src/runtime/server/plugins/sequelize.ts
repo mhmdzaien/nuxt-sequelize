@@ -1,4 +1,5 @@
 import type {
+  Dialect,
   Order,
   QueryOptions,
   WhereOptions } from 'sequelize'
@@ -15,22 +16,24 @@ import { getHeader } from 'h3'
 import type { QueryGenerator, RawQueryResult } from '../types'
 import { mySequelizeModelLoad } from '#my-sequelize-options'
 
+let _sequelize: Sequelize
 let _queryGenerator: QueryGenerator
 let _builder: Knex
 const _connection: { [key: string]: Sequelize } = {}
 
-const createConnection = (identifier?: string) => {
+const createConnection = (identifier: string) => {
   if (!_connection[identifier]) {
     _connection[identifier] = new Sequelize({
-      dialect: 'mysql',
-      host: process.env.DB_HOST,
-      username: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
+      dialect: process.env.DB_DRIVER as Dialect ?? 'mysql',
+      host: process.env.DB_HOST ?? 'localhost',
+      username: process.env.DB_USER ?? 'root',
+      password: process.env.DB_PASSWORD ?? '',
+      database: process.env.DB_NAME ?? '',
       port: Number(process.env.DB_PORT ?? '3306'),
       // logging: false,
     })
   }
+  _sequelize = _connection[identifier]
   _builder = knex({ client: _connection[identifier].getDialect() })
   _queryGenerator = _connection[identifier].getQueryInterface().queryGenerator as QueryGenerator
   return _connection[identifier]
@@ -38,7 +41,7 @@ const createConnection = (identifier?: string) => {
 
 const multiTenantDb = (nitroApp: NitroApp) => {
   nitroApp.hooks.hook('request', (event) => {
-    const tenantId = getHeader(event, 'tenant')
+    const tenantId = getHeader(event, 'tenant') ?? 'default'
     const connection = createConnection(tenantId)
     event.context.sequelize = connection
     mySequelizeModelLoad(connection)
