@@ -3,7 +3,7 @@ import type { Sequelize, QueryOptions, Order, WhereOptions } from 'sequelize'
 import { QueryTypes } from 'sequelize'
 import type { Knex } from 'knex'
 import knex from 'knex'
-import type { KnexSequelize, QueryGenerator, RawQueryResult, } from '../../types'
+import type { KnexSequelize, QueryGenerator, RawQueryResult } from '../../types'
 
 let _sequelize: Sequelize
 let _queryGenerator: QueryGenerator
