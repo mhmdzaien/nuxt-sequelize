@@ -1,6 +1,6 @@
 {
   "name": "my-sequelize",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "My sequelize nuxt module",
   "repository": "mhmdzaien/nuxt-sequelize",
   "license": "MIT",
@@ -45,6 +45,7 @@
     "@nuxt/schema": "^3.13.2",
     "@nuxt/test-utils": "^3.14.4",
     "@types/node": "latest",
+    "@types/qs": "^6.9.16",
     "changelogen": "^0.5.7",
     "eslint": "^9.13.0",
     "nuxt": "^3.13.2",
