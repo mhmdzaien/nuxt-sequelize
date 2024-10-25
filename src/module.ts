@@ -10,10 +10,10 @@ import {
 export interface ModuleOptions {
   modelPath: string
   modelInitiator: string
-  jwtAccessSecret: string
-  jwtRefreshSecret: string
-  accessTokenLifeTime: number
-  cookieLifeTime: number
+  jwtAccessSecret?: string
+  jwtRefreshSecret?: string
+  accessTokenLifeTime?: number
+  cookieLifeTime?: number
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -33,6 +33,9 @@ export default defineNuxtModule<ModuleOptions>({
     // }).dst
 
     nuxt.hook('nitro:config', (config) => {
+      if (!config.virtual) {
+        config.virtual = {}
+      }
       config.virtual['#my-sequelize-options'] = [
         `import { ${_options.modelInitiator} } from '${modelResolver.resolve(_options.modelPath)}'`,
         `export const mySequelizeModelLoad = ${_options.modelInitiator}`,
