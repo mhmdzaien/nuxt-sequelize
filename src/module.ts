@@ -9,11 +9,11 @@ import {
 // Module options TypeScript interface definition
 export interface ModuleOptions {
   modelPath: string
-  modelInitiator: string
+  modelInitiator?: string
   jwtAccessSecret?: string
   jwtRefreshSecret?: string
-  accessTokenLifeTime?: number
-  cookieLifeTime?: number
+  accessTokenLifeTime?: number // in seconds
+  cookieLifeTime?: number // in seconds
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -22,7 +22,13 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: 'nuxtSequelize',
   },
   // Default configuration options of the Nuxt module
-  defaults: {},
+  defaults: {
+    modelInitiator: 'initModels',
+    jwtAccessSecret: 'no-key-access',
+    jwtRefreshSecret: 'no-key-refresh',
+    accessTokenLifeTime: 60 * 60 * 2,
+    cookieLifeTime: 60 * 60 * 24 * 30,
+  },
   async setup(_options, nuxt) {
     const resolver = createResolver(import.meta.url)
     const modelResolver = createResolver(nuxt.options.srcDir)
