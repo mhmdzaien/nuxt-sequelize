@@ -1,6 +1,6 @@
 {
   "name": "@mhmdzaien/nuxt-sequelize",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "sequelize nuxt module",
   "repository": {
     "type": "git",
