@@ -41,11 +41,15 @@ export default defineNuxtModule<ModuleOptions>({
         `import { ${_options.modelInitiator} } from '${modelResolver.resolve(_options.modelPath)}'`,
         `export const mySequelizeModelLoad = ${_options.modelInitiator}`,
         `export const mySequelizeOptions = ${JSON.stringify(_options)}`,
+        `import * as controllerCollection from '${nuxt.options.serverDir}/controllers'`,
+        `export const myControllers = controllerCollection`,
       ].join('\n')
     })
 
     addPlugin(resolver.resolve('./runtime/plugin'))
     addServerPlugin(resolver.resolve('./runtime/server/plugins/sequelize'))
+    addServerPlugin(resolver.resolve('./runtime/server/plugins/controllers'))
     addServerImportsDir(resolver.resolve('./runtime/server/utils'))
+    addServerImportsDir(resolver.resolve('./runtime/server/decorators'))
   },
 })

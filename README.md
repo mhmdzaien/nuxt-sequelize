@@ -23,21 +23,53 @@ Nuxt module to integrate sequelize and model at server api
 ## Features
 
 <!-- Highlight some of the features your module provide here -->
-- ⛰ &nbsp;Foo
-- 🚠 &nbsp;Bar
-- 🌲 &nbsp;Baz
+- &nbsp;Integrate with sequelize model
+- &nbsp;Add controller support on server handler
+- &nbsp;Authentication using token header
 
 ## Quick Setup
 
-Install the module to your Nuxt application with one command:
+1.Install the module to your Nuxt application with one command:
 
 ```bash
-npx nuxi module add nuxt-sequelize
+npx nuxi@latest module add @mhmdzaien/nuxt-sequelize
+```
+2.Add @mhmdzaien/nuxt-sequelize, models path and nitro support decorator in nuxt.config.ts
+
+```js
+export default defineNuxtConfig({
+  modules: [@mhmdzaien/nuxt-sequelize],
+  nitro: {
+    esbuild: {
+      options: {
+        tsconfigRaw: {
+          compilerOptions: {
+            experimentalDecorators: true,
+          },
+        },
+      },
+    },
+  },
+  nuxtSequelize: {
+    modelPath: './server/models',
+  },
+})
+```
+
+3.Create index.js inside 'modelPath' that contain loader to model
+```js
+export function initModels(sequelize: Sequelize) {
+  User.initModel(sequelize)
+}
 ```
 
 That's it! You can now use My Module in your Nuxt app ✨
 
+## Server utils
 
+### defineMyEventHandler(handler, authorizeRequest?)
+- handler : Function(event) => callback handler with event parameter
+- authorizeRequest : "*" | Array<number> => if set handler check authentication in token header accepted role number
 ## Contribution
 
 <details>

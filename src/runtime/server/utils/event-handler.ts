@@ -23,10 +23,11 @@ interface MyH3EventContext extends H3EventContext {
   sequelize: Sequelize
 }
 
-interface MyH3Event<T extends EventHandlerRequest> extends H3Event<T> {
+export type AuthorizeRequest = '*' | Array<number>
+export interface MyH3Event<T extends EventHandlerRequest> extends H3Event<T> {
   context: MyH3EventContext
 }
-interface MyEventHandler<
+export interface MyEventHandler<
   Request extends EventHandlerRequest = EventHandlerRequest,
   Response extends EventHandlerResponse = EventHandlerResponse,
 > {
@@ -54,14 +55,14 @@ const extractToken = async (
 }
 
 export const defineMyEventHandler = <T extends EventHandlerRequest, D>(
-  handler: MyEventHandler<T, D>, // EventHandler<T, D>,
-  authorizeRequest?: boolean | Array<number>,
+  handler: MyEventHandler<T, D>,
+  authorizeRequest?: AuthorizeRequest,
 ): EventHandler<T, D> =>
   defineEventHandler<T>(async (event) => {
     try {
       const decodedToken = await extractToken(event)
       event.context.decodedToken = decodedToken
-      if (authorizeRequest && !decodedToken) {
+      if ((authorizeRequest || authorizeRequest === '*') && !decodedToken) {
         throw {
           statusCode: 401,
           message: 'Anda tidak terotentifikasi',

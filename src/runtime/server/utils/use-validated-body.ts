@@ -1,11 +1,11 @@
 import defu from 'defu'
 import { type H3Event, type EventHandlerRequest, readFormData, readBody, createError, readMultipartFormData } from 'h3'
-import type { ZodTypeAny } from 'zod'
+import type { ZodType, ZodTypeDef } from 'zod'
 
-export const useValidatedBody = async (
+export const useValidatedBody = async<Output = unknown & { getFile?(): File, hasFile?(): boolean }, _Def extends ZodTypeDef = ZodTypeDef, _Input = Output>(
   event: H3Event<EventHandlerRequest>,
-  zodSchema: ZodTypeAny | false,
-): Promise<unknown> => {
+  zodSchema: ZodType<Output, _Def, _Input> | false,
+): Promise< Output > => {
   const checkBody = await readBody(event)
   if (!checkBody) {
     throw createError({
