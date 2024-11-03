@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs'
 import {
   defineNuxtModule,
   addPlugin,
@@ -37,19 +38,24 @@ export default defineNuxtModule<ModuleOptions>({
       if (!config.virtual) {
         config.virtual = {}
       }
-      config.virtual['#my-sequelize-options'] = [
+      const loader = [
         `import { ${_options.modelInitiator} } from '${modelResolver.resolve(_options.modelPath)}'`,
         `export const mySequelizeModelLoad = ${_options.modelInitiator}`,
         `export const mySequelizeOptions = ${JSON.stringify(_options)}`,
-        `import * as controllerCollection from '${nuxt.options.serverDir}/controllers'`,
-        `export const myControllers = controllerCollection`,
-      ].join('\n')
+      ]
+      if (existsSync(`${nuxt.options.serverDir}/controllers`)) {
+        loader.push(`import * as controllerCollection from '${nuxt.options.serverDir}/controllers'`)
+        loader.push(`export const myControllers = controllerCollection`)
+      }
+      config.virtual['#my-sequelize-options'] = loader.join('\n')
     })
 
     addPlugin(resolver.resolve('./runtime/plugin'))
     addServerPlugin(resolver.resolve('./runtime/server/plugins/sequelize'))
-    addServerPlugin(resolver.resolve('./runtime/server/plugins/controllers'))
     addServerImportsDir(resolver.resolve('./runtime/server/utils'))
     addServerImportsDir(resolver.resolve('./runtime/server/decorators'))
+    if (existsSync(`${nuxt.options.serverDir}/controllers`)) {
+      addServerPlugin(resolver.resolve('./runtime/server/plugins/controllers'))
+    }
   },
 })
