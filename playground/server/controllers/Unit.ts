@@ -21,7 +21,6 @@ export class Unit {
 
   @post('/api/unit')
   async postData(event: MyH3Event<Request>) {
-    console.log(this)
     const data = await useValidatedBody(event, this.validationSchema)
     return (await UnitModel.create(data)).toJSON()
   }
