@@ -1,12 +1,7 @@
 import type {
-  Association,
-  BelongsToGetAssociationMixin,
-  BelongsToSetAssociationMixin,
-  BelongsToCreateAssociationMixin,
   CreationOptional,
   InferCreationAttributes,
   InferAttributes,
-  NonAttribute,
   Sequelize,
 } from 'sequelize'
 import {
