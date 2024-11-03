@@ -11,8 +11,9 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
       if (method !== 'constructor') {
         const routeMetadata = Reflect.getMetadata('route::method', controller, method) as MetadataValue
         if (routeMetadata) {
-          nitroApp.router.add(routeMetadata.route, defineMyEventHandler(async (event) => {
-            return controller[method](event)
+          nitroApp.router.add(routeMetadata.route, defineMyEventHandler(async function (event) {
+            const objectDynamic = new myControllers[controllerName]()
+            return objectDynamic[method](event)
           }, routeMetadata.authorizeRequest), routeMetadata.method)
         }
       }
