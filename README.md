@@ -73,6 +73,7 @@ DB_DRIVER=
 ```
 
 DB_DRIVER is one of sequelize supported dialect
+
 That's it! You can now use My Module in your Nuxt app ✨
 
 ## Server utils
