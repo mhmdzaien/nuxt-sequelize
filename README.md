@@ -103,13 +103,13 @@ That's it! You can now use My Module in your Nuxt app ✨
 
 <!-- Badges -->
 [npm-version-src]: https://img.shields.io/npm/v/my-module/latest.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-version-href]: https://npmjs.com/package/my-module
+[npm-version-href]: https://www.npmjs.com/package/@mhmdzaien/nuxt-sequelize
 
 [npm-downloads-src]: https://img.shields.io/npm/dm/my-module.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-downloads-href]: https://npm.chart.dev/my-module
+[npm-downloads-href]: https://npm.chart.dev/@mhmdzaien/nuxt-sequelize
 
 [license-src]: https://img.shields.io/npm/l/my-module.svg?style=flat&colorA=020420&colorB=00DC82
-[license-href]: https://npmjs.com/package/my-module
+[license-href]: https://npmjs.com/package/@mhmdzaien/nuxt-sequelize
 
 [nuxt-src]: https://img.shields.io/badge/Nuxt-020420?logo=nuxt.js
 [nuxt-href]: https://nuxt.com
