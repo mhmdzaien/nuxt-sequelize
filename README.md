@@ -63,6 +63,16 @@ export function initModels(sequelize: Sequelize) {
 }
 ```
 
+4.Create .env file contain database configuration
+```env
+DB_NAME=
+DB_USER=root
+DB_PASSWORD=
+DB_HOST=localhost
+DB_DRIVER=
+```
+
+DB_DRIVER is one of sequelize supported dialect
 That's it! You can now use My Module in your Nuxt app ✨
 
 ## Server utils
