@@ -50,7 +50,6 @@ export default defineNuxtModule<ModuleOptions>({
       config.virtual['#my-sequelize-options'] = loader.join('\n')
     })
 
-    addPlugin(resolver.resolve('./runtime/plugin'))
     addServerPlugin(resolver.resolve('./runtime/server/plugins/sequelize'))
     addServerImportsDir(resolver.resolve('./runtime/server/utils'))
     addServerImportsDir(resolver.resolve('./runtime/server/decorators'))
