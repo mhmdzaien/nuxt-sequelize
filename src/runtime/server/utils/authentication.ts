@@ -14,19 +14,12 @@ export const comparePassword = (password: string, hashPassword: string) =>
 
 export interface AccessTokenPayload {
   jwtId: string
-  [key: string]: string | number | object
   id: string | number
-  role: string | number
-  username: string
-  name: string
+  [key: string]: string | number | object
 }
 
 export type UserPayload = {
   id: string | number
-  trueUserId?: string
-  username?: string
-  role?: string | number
-  name?: string
   [key: string]: string | number | object
 }
 
@@ -44,14 +37,7 @@ export const encodeAccessToken = (
 ) => {
   const payload = {
     jwtId: uuidv4(),
-    ...{
-      id: userPayload.id,
-      trueUserId: userPayload.trueUserId,
-      username: userPayload.username,
-      role: userPayload.role,
-      name: userPayload.name,
-      unitId: userPayload.unitId,
-    },
+    ...userPayload,
   }
   const token = jwt.sign(payload, (jwtAccessSecret ?? 'no-key') as string, {
     expiresIn: (accessTokenLifeTime ?? 60),
