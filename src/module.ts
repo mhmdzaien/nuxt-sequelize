@@ -1,7 +1,6 @@
 import { existsSync } from 'node:fs'
 import {
   defineNuxtModule,
-  addPlugin,
   createResolver,
   addServerImportsDir,
   addServerPlugin,
