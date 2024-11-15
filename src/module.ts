@@ -51,7 +51,6 @@ export default defineNuxtModule<ModuleOptions>({
     const redis = _options.redis
       ? { redis: { driver: 'redis', ..._options.redis } }
       : {}
-    console.log(redis)
     nuxt.options.nitro.esbuild = {
       options: {
         tsconfigRaw: {
