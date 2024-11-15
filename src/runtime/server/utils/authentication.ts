@@ -3,6 +3,7 @@ import { type H3Event, type EventHandlerRequest, setCookie, createError } from '
 import jwt, { type JwtPayload } from 'jsonwebtoken'
 import { v4 as uuidv4 } from 'uuid'
 import { mySequelizeOptions } from '#my-sequelize-options'
+import { useStorage } from '#imports'
 
 export const hashPassword = (password: string) => {
   const salt = genSaltSync(10)
