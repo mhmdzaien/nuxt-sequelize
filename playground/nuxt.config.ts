@@ -5,8 +5,8 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2024-10-24',
   nuxtSequelize: {
-    jwtAccessSecret: "Test",
-    jwtRefreshSecret: "IniTestRefresh",
+    jwtAccessSecret: 'Test',
+    jwtRefreshSecret: 'IniTestRefresh',
     accessTokenLifeTime: 60 * 60 * 3, // in seconds
     cookieLifeTime: 60 * 60 * 24,
     redis: {
