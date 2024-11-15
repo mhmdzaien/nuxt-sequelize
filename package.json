@@ -27,6 +27,7 @@
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
     "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
     "release-notest": "npm run lint && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
+    "pre-release": "npm run lint && npm run prepack && npm version prerelease --preid=alpha && npm publish && git push --follow-tags",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest watch",
