@@ -51,6 +51,7 @@ export default defineNuxtModule<ModuleOptions>({
     const redis = _options.redis
       ? { redis: { driver: 'redis', ..._options.redis } }
       : {}
+    console.log(redis)
     nuxt.options.nitro.esbuild = {
       options: {
         tsconfigRaw: {
@@ -64,7 +65,7 @@ export default defineNuxtModule<ModuleOptions>({
       if (!config.virtual) {
         config.virtual = {}
       }
-      config.storage = { ...config.storage, redis }
+      config.storage = { ...config.storage, ...redis }
       const loader = [
         `import { ${_options.modelInitiator} } from '${modelResolver.resolve(
           _options.modelPath!,
