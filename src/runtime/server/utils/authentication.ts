@@ -28,6 +28,7 @@ const {
   jwtRefreshSecret,
   accessTokenLifeTime,
   cookieLifeTime,
+  redis,
 } = mySequelizeOptions
 
 export const encodeAccessToken = (
@@ -76,7 +77,7 @@ export const verifyToken = async (
       token,
       type === 'access' ? (jwtAccessSecret ?? 'no-key') : (jwtRefreshSecret ?? 'no-key'),
     ) as AccessTokenPayload
-    if (import.meta.server && process.env.REDIS_HOST) {
+    if (import.meta.server && redis.host) {
       if (await useStorage('redis').hasItem(decodeToken.jwtId)) {
         throw createError({
           statusCode: 400,
