@@ -4,19 +4,13 @@ export default defineNuxtConfig({
   runtimeConfig: {
   },
   compatibilityDate: '2024-10-24',
-  nitro: {
-    esbuild: {
-      options: {
-        tsconfigRaw: {
-          compilerOptions: {
-            experimentalDecorators: true,
-          },
-        },
-      },
-    },
-  },
   nuxtSequelize: {
-    modelInitiator: 'initModels',
-    modelPath: './server/models',
+    redis: {
+      port: process.env.REDIS_PORT!,
+      host: process.env.REDIS_HOST!,
+      password: process.env.REDIS_PASSWORD!,
+      username: process.env.REDIS_USER!,
+      database: 3,
+    },
   },
 })

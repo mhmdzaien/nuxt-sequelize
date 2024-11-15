@@ -8,6 +8,12 @@ onMounted(() => {
 const fetch = () => {
   $fetch('/')
 }
+if (import.meta.client) {
+  const eventSource = new EventSource('/sse')
+  eventSource.onmessage = (event) => {
+    console.log(JSON.parse(event.data))
+  }
+}
 </script>
 
 <template>
