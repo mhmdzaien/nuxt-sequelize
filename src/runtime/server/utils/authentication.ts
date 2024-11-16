@@ -78,7 +78,7 @@ export const verifyToken = async (
       token,
       type === 'access' ? (jwtAccessSecret ?? 'no-key') : (jwtRefreshSecret ?? 'no-key'),
     ) as AccessTokenPayload
-    if (import.meta.server && redis.host) {
+    if (import.meta.server && redis?.host) {
       if (await useStorage('redis').hasItem(decodeToken.jwtId)) {
         throw createError({
           statusCode: 400,
