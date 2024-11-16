@@ -6,6 +6,7 @@ import {
   addServerPlugin,
 } from '@nuxt/kit'
 import type { Dialect } from 'sequelize'
+import type { NitroConfig } from 'nitropack'
 // Module options TypeScript interface definition
 export interface ModuleOptions {
   modelPath?: string
@@ -31,6 +32,24 @@ export interface ModuleOptions {
   }
 }
 
+function initNitroConfig(nitroOptions: NitroConfig): NitroConfig {
+  nitroOptions.esbuild = {
+    options: {
+      tsconfigRaw: {
+        compilerOptions: {
+          experimentalDecorators: true,
+        },
+      },
+    },
+  }
+  nitroOptions.externals = {
+    traceInclude: [
+      'node_modules/knex/knex.js',
+    ],
+  }
+  return nitroOptions
+}
+
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: '@mhmdzaien/nuxt-sequelize',
@@ -51,15 +70,7 @@ export default defineNuxtModule<ModuleOptions>({
     const redis = _options.redis
       ? { redis: { driver: 'redis', ..._options.redis } }
       : {}
-    nuxt.options.nitro.esbuild = {
-      options: {
-        tsconfigRaw: {
-          compilerOptions: {
-            experimentalDecorators: true,
-          },
-        },
-      },
-    }
+    nuxt.options.nitro = initNitroConfig(nuxt.options.nitro)
     nuxt.hook('nitro:config', (config) => {
       if (!config.virtual) {
         config.virtual = {}
