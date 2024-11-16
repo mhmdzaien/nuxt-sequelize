@@ -7,19 +7,20 @@ import type { NitroApp } from 'nitropack'
 import { defineNitroPlugin } from 'nitropack/dist/runtime/plugin'
 import { getHeader } from 'h3'
 import { initConnection } from '../utils/knex-utils'
-import { mySequelizeModelLoad } from '#my-sequelize-options'
+import { mySequelizeModelLoad, mySequelizeOptions } from '#my-sequelize-options'
 
+const { connection } = mySequelizeOptions
 const _connection: { [key: string]: Sequelize } = {}
 
 const createConnection = (identifier: string) => {
   if (!_connection[identifier]) {
     _connection[identifier] = new Sequelize({
-      dialect: process.env.DB_DRIVER as Dialect ?? 'mysql',
-      host: process.env.DB_HOST ?? 'localhost',
-      username: process.env.DB_USER ?? 'root',
-      password: process.env.DB_PASSWORD ?? '',
-      database: process.env.DB_NAME ?? '',
-      port: Number(process.env.DB_PORT ?? '3306'),
+      dialect: connection?.dialect ?? process.env.DB_DRIVER as Dialect ?? 'mysql',
+      host: connection?.host ?? process.env.DB_HOST ?? 'localhost',
+      username: connection?.username ?? process.env.DB_USER ?? 'root',
+      password: connection?.password ?? process.env.DB_PASSWORD ?? '',
+      database: connection?.database ?? process.env.DB_NAME ?? '',
+      port: Number(connection?.port ?? process.env.DB_PORT ?? '3306'),
       // logging: false,
     })
   }
