@@ -1,4 +1,4 @@
 export default defineMyEventHandler(async (event) => {
   const t = await useTranslation(event)
-  return event.context.decodedToken
+  return { token: event.context.decodedToken, s: t }
 })
