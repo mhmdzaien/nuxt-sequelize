@@ -47,8 +47,13 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
   else {
     const connection = createConnection('default')
     nitroApp.hooks.hook('request', (event) => {
-      mySequelizeModelLoad(connection)
-      event.context.sequelize = connection
+      try {
+        mySequelizeModelLoad(connection)
+        event.context.sequelize = connection
+      }
+      catch (err) {
+        console.log(err)
+      }
     })
   }
 })

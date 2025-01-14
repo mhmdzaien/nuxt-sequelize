@@ -54,6 +54,9 @@ export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: '@mhmdzaien/nuxt-sequelize',
     configKey: 'nuxtSequelize',
+    compatibility: {
+      nuxt: '>=3.5.0',
+    },
   },
   // Default configuration options of the Nuxt module
   defaults: {
