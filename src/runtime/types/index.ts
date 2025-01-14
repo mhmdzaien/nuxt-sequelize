@@ -1,7 +1,7 @@
 import type { Knex } from 'knex'
 import type { FindAttributeOptions, FindOptions, Model, ModelStatic, Order, QueryTypes, TableName, WhereOptions } from 'sequelize'
 
-export type KnexSequelize = Knex & {
+export type KnexSequelize = Knex.QueryBuilder & {
   sequelizeOrder(order?: Order): KnexSequelize
   sequelizeWhere(where?: WhereOptions): KnexSequelize
 }
