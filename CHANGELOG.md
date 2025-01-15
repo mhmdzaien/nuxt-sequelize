@@ -1,6 +1,10 @@
 # Changelog
 
 
+## v1.0.0
+
+[compare changes](https://github.com/mhmdzaien/nuxt-sequelize/compare/v1.0.0-alpha.4...v1.0.0)
+
 ## v1.0.15
 
 [compare changes](https://github.com/mhmdzaien/nuxt-sequelize/compare/v1.0.14...v1.0.15)
