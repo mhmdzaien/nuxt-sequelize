@@ -2,7 +2,7 @@ import 'knex'
 
 declare module 'knex' {
   namespace Knex {
-    interface QueryInterface<TRecord extends {} = any, TResult = any> {
+    interface QueryInterface {
       sequelizeWhere(): Knex.QueryBuilder
       sequelizeOrder(): Knex.QueryBuilder
     }

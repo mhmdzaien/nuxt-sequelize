@@ -10,7 +10,7 @@ export function initModels(sequelize: Sequelize) {
 
   User.belongsTo(Unit, {
     as: 'kriteria',
-    foreignKey: 'kriteriaId'
+    foreignKey: 'kriteriaId',
   })
   return {
     User,

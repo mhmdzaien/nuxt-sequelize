@@ -2,6 +2,7 @@ import { compare, genSaltSync, hashSync } from 'bcrypt'
 import { type H3Event, type EventHandlerRequest, setCookie, createError } from 'h3'
 import jwt, { type JwtPayload } from 'jsonwebtoken'
 import { v4 as uuidv4 } from 'uuid'
+// ts-ignore:next-line
 import { mySequelizeOptions } from '#my-sequelize-options'
 import { useStorage } from '#imports'
 
@@ -29,7 +30,6 @@ const {
   jwtRefreshSecret,
   accessTokenLifeTime,
   cookieLifeTime,
-  redis,
 } = mySequelizeOptions
 
 export const encodeAccessToken = (
@@ -58,6 +58,18 @@ export const encodeAccessToken = (
   return token
 }
 
+export const revokeToken = (token: string, type: 'access' | 'refresh') => {
+  try {
+    const decodeToken = jwt.verify(token, type === 'access' ? (jwtAccessSecret ?? 'no-key') : (jwtRefreshSecret ?? 'no-key')) as { jwtId: string, exp: number }
+    const currentTimestampSecond = Math.floor(Date.now() / 1000)
+    const ttl = decodeToken.exp - currentTimestampSecond + 5
+    useStorage('node-cache').setItem(decodeToken.jwtId, 'expired', { ttl: ttl })
+  }
+  catch (error) {
+    console.log(error)
+  }
+}
+
 export const encodeRefreshToken = (userId: string) => {
   return jwt.sign(
     {
@@ -78,8 +90,8 @@ export const verifyToken = async (
       token,
       type === 'access' ? (jwtAccessSecret ?? 'no-key') : (jwtRefreshSecret ?? 'no-key'),
     ) as AccessTokenPayload
-    if (import.meta.server && redis?.host) {
-      if (await useStorage('redis').hasItem(decodeToken.jwtId)) {
+    if (import.meta.server) {
+      if (await useStorage('node-cache').hasItem(decodeToken.jwtId)) {
         throw createError({
           statusCode: 400,
           statusMessage: 'Token tidak valid',
@@ -89,10 +101,10 @@ export const verifyToken = async (
     return decodeToken
   }
   catch (error) {
-    console.log(error)
     throw createError({
       statusCode: 400,
       statusMessage: 'Token tidak valid',
+      cause: error,
     })
   }
 }

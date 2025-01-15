@@ -1,6 +1,6 @@
 {
   "name": "@mhmdzaien/nuxt-sequelize",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.0",
   "description": "sequelize nuxt module",
   "repository": {
     "type": "git",
@@ -28,6 +28,7 @@
     "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
     "release-notest": "npm run lint && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
     "pre-release": "npm run lint && npm run prepack && npm version prerelease --preid=alpha && npm publish && git push --follow-tags",
+    "beta-release": "npm run lint && npm run test && npm run prepack && npm version prerelease --preid=beta && npm publish --tag beta && git push --follow-tags",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest watch",

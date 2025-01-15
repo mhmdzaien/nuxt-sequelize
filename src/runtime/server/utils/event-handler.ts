@@ -37,7 +37,7 @@ export interface MyEventHandler<
   (event: MyH3Event<Request>): Response
 }
 
-const extractToken = async (
+export const extractToken = async (
   event: H3Event<EventHandlerRequest>,
 ): Promise<AccessTokenPayload | undefined> => {
   const tokenCookies = getCookie(event, 'accessToken')
@@ -47,7 +47,9 @@ const extractToken = async (
       return decodedToken as AccessTokenPayload
     }
     catch (err) {
-      console.log(err)
+      if (err instanceof Error) {
+        console.log(err.message)
+      }
       return undefined
     }
   }
@@ -80,20 +82,21 @@ export const defineMyEventHandler = <T extends EventHandlerRequest, D>(
       return await handler(event as MyH3Event<T>)
     }
     catch (err) {
-      setResponseStatus(event, err.statusCode ?? 500)
-      if (err.statusCode === 422) {
-        err.data = err.data?.reduce((validation: object, row: ZodIssue) => {
+      const error = err as unknown as { code: number, message: string, statusCode: number, data?: unknown, stack: unknown, statusMessage?: string }
+      setResponseStatus(event, error.statusCode ?? 500)
+      if (error.statusCode === 422) {
+        error.data = error.data?.reduce((validation: object, row: ZodIssue) => {
           const key = row.path.join('.') as string
           return { ...validation, ...{ [key]: row.message } }
         }, {})
       }
       else {
-        console.log(err.stack)
+        console.log(error.stack)
       }
       return {
-        code: err.code ?? err.statusCode,
-        message: err.statusMessage ?? err.message,
-        details: err.data,
+        code: error.code ?? error.statusCode,
+        message: error.statusMessage ?? error.message,
+        details: error.data,
       }
     }
   })

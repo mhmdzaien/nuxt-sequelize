@@ -23,13 +23,6 @@ export interface ModuleOptions {
     database: string
     port: number
   }
-  redis?: {
-    host: string
-    username: string
-    password: string
-    database: number
-    port: number
-  }
 }
 
 function initNitroConfig(nitroOptions: NitroConfig): NitroConfig {
@@ -70,15 +63,11 @@ export default defineNuxtModule<ModuleOptions>({
   async setup(_options, nuxt) {
     const resolver = createResolver(import.meta.url)
     const modelResolver = createResolver(nuxt.options.rootDir)
-    const redis = _options.redis
-      ? { redis: { driver: 'redis', ..._options.redis } }
-      : {}
     nuxt.options.nitro = initNitroConfig(nuxt.options.nitro)
     nuxt.hook('nitro:config', (config) => {
       if (!config.virtual) {
         config.virtual = {}
       }
-      config.storage = { ...config.storage, ...redis }
       const loader = [
         `import { ${_options.modelInitiator} } from '${modelResolver.resolve(
           _options.modelPath!,
@@ -94,7 +83,7 @@ export default defineNuxtModule<ModuleOptions>({
       }
       config.virtual['#my-sequelize-options'] = loader.join('\n')
     })
-
+    addServerPlugin(resolver.resolve('./runtime/server/plugins/node-cache.storage'))
     addServerPlugin(resolver.resolve('./runtime/server/plugins/sequelize'))
     addServerImportsDir(resolver.resolve('./runtime/server/utils'))
     addServerImportsDir(resolver.resolve('./runtime/server/decorators'))
