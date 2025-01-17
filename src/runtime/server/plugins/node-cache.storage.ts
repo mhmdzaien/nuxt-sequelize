@@ -1,6 +1,7 @@
 import NodeCache from 'node-cache'
 import { defineDriver, type Unwatch } from 'unstorage'
 import { defineNitroPlugin } from 'nitropack/dist/runtime/plugin'
+import { useStorage } from '#imports'
 
 const nodeCacheDriver = defineDriver<NodeCache.Options | undefined, never>((options: NodeCache.Options | undefined) => {
   const myCache = new NodeCache(options)
