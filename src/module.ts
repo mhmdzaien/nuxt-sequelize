@@ -7,7 +7,7 @@ import {
 } from '@nuxt/kit'
 import type { Dialect } from 'sequelize'
 import type { NitroConfig } from 'nitropack'
-import type { PersistentNodeCacheOptions } from './runtime/server/plugins/node-cache.storage'
+import type { PersistentNodeCacheOptions } from './runtime/types'
 // Module options TypeScript interface definition
 export interface ModuleOptions {
   modelPath?: string
@@ -85,8 +85,8 @@ export default defineNuxtModule<ModuleOptions>({
       }
       config.virtual['#my-sequelize-options'] = loader.join('\n')
     })
-    addServerPlugin(resolver.resolve('./runtime/server/plugins/node-cache.storage'))
     addServerPlugin(resolver.resolve('./runtime/server/plugins/sequelize'))
+    addServerPlugin(resolver.resolve('./runtime/server/plugins/node-cache.storage'))
     addServerImportsDir(resolver.resolve('./runtime/server/utils'))
     addServerImportsDir(resolver.resolve('./runtime/server/decorators'))
     if (existsSync(`${nuxt.options.serverDir}/controllers`)) {

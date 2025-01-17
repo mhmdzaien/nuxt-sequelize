@@ -1,19 +1,10 @@
 import fs from 'node:fs'
-import type { CacheSerializer } from 'persistent-node-cache'
 import PersistentNodeCache from 'persistent-node-cache'
 import { defineDriver, type Unwatch } from 'unstorage'
 import { defineNitroPlugin } from 'nitropack/dist/runtime/plugin'
-import type { Options } from 'node-cache'
-import { useStorage } from '#imports'
+import type { PersistentNodeCacheOptions } from '../../types'
 import { mySequelizeOptions } from '#my-sequelize-options'
-
-export type PersistentNodeCacheOptions = {
-  cacheName: string
-  period?: number
-  dir?: string
-  opts?: Options
-  serializer?: CacheSerializer
-}
+import { useStorage } from '#imports'
 
 const nodeCacheDriver = defineDriver<PersistentNodeCacheOptions | undefined, never>((options: PersistentNodeCacheOptions | undefined) => {
   const dir = options?.dir ?? './.cache'
@@ -52,5 +43,5 @@ const nodeCacheDriver = defineDriver<PersistentNodeCacheOptions | undefined, nev
 
 export default defineNitroPlugin(() => {
   const storage = useStorage()
-  storage.mount('node-cache', nodeCacheDriver(mySequelizeOptions.nodeCacheOptions))
+  storage.mount('node-cache', nodeCacheDriver(mySequelizeOptions?.nodeCacheOptions))
 })
