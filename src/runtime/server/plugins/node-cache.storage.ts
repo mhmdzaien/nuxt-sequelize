@@ -1,3 +1,4 @@
+import fs from 'node:fs'
 import type { CacheSerializer } from 'persistent-node-cache'
 import PersistentNodeCache from 'persistent-node-cache'
 import { defineDriver, type Unwatch } from 'unstorage'
@@ -13,7 +14,10 @@ type PersistentNodeCacheOptions = {
 }
 
 const nodeCacheDriver = defineDriver<PersistentNodeCacheOptions | undefined, never>((options: PersistentNodeCacheOptions | undefined) => {
-  const myCache = new PersistentNodeCache.PersistentNodeCache(options?.cacheName ?? 'default', options?.period, options?.dir, options?.opts, options?.serializer)
+  const dir = options?.dir ?? './.cache'
+  if (!fs.existsSync(dir))
+    fs.mkdirSync(dir)
+  const myCache = new PersistentNodeCache.PersistentNodeCache(options?.cacheName ?? 'default', options?.period, dir, options?.opts, options?.serializer)
   return {
     name: 'node-cache-driver',
     options,
