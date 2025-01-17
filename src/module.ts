@@ -7,6 +7,7 @@ import {
 } from '@nuxt/kit'
 import type { Dialect } from 'sequelize'
 import type { NitroConfig } from 'nitropack'
+import type { PersistentNodeCacheOptions } from './runtime/server/plugins/node-cache.storage'
 // Module options TypeScript interface definition
 export interface ModuleOptions {
   modelPath?: string
@@ -23,6 +24,7 @@ export interface ModuleOptions {
     database: string
     port: number
   }
+  nodeCacheOptions?: PersistentNodeCacheOptions
 }
 
 function initNitroConfig(nitroOptions: NitroConfig): NitroConfig {
