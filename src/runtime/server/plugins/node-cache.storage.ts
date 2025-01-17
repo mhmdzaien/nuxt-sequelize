@@ -1,10 +1,19 @@
-import NodeCache from 'node-cache'
+import type { CacheSerializer } from 'persistent-node-cache'
+import PersistentNodeCache from 'persistent-node-cache'
 import { defineDriver, type Unwatch } from 'unstorage'
 import { defineNitroPlugin } from 'nitropack/dist/runtime/plugin'
 import { useStorage } from '#imports'
 
-const nodeCacheDriver = defineDriver<NodeCache.Options | undefined, never>((options: NodeCache.Options | undefined) => {
-  const myCache = new NodeCache(options)
+type PersistentNodeCacheOptions = {
+  cacheName: string
+  period?: number
+  dir?: string
+  opts?: unknown
+  serializer?: CacheSerializer
+}
+
+const nodeCacheDriver = defineDriver<PersistentNodeCacheOptions | undefined, never>((options: PersistentNodeCacheOptions | undefined) => {
+  const myCache = new PersistentNodeCache.PersistentNodeCache(options?.cacheName ?? 'default', options?.period, options?.dir, options?.opts, options?.serializer)
   return {
     name: 'node-cache-driver',
     options,
