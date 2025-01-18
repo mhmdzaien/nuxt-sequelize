@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import { defineDriver, type Unwatch } from 'unstorage'
 import { defineNitroPlugin } from 'nitropack/dist/runtime/plugin'
-import { SqliteCache, type SqliteCacheConfiguration } from '../../../libs/sqlite-cache'
+import { SqliteCache, type SqliteCacheConfiguration } from '../../libs/sqlite-cache'
 import { useStorage } from '#imports'
 
 const sqliteCacheDriver = defineDriver<SqliteCacheConfiguration & { dir: string } | undefined, never>((options: SqliteCacheConfiguration & { dir: string } | undefined) => {
