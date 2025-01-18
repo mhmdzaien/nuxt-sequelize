@@ -1,4 +1,3 @@
-import { compare, genSaltSync, hashSync } from 'bcrypt'
 import { type H3Event, type EventHandlerRequest, setCookie, createError } from 'h3'
 import jwt, { type JwtPayload } from 'jsonwebtoken'
 import { v4 as uuidv4 } from 'uuid'
@@ -6,13 +5,6 @@ import { v4 as uuidv4 } from 'uuid'
 import { mySequelizeOptions } from '#my-sequelize-options'
 import { useStorage } from '#imports'
 
-export const hashPassword = (password: string) => {
-  const salt = genSaltSync(10)
-  return hashSync(password, salt)
-}
-
-export const comparePassword = (password: string, hashPassword: string) =>
-  compare(password, hashPassword).then(resp => resp)
 
 export interface AccessTokenPayload {
   jwtId: string
