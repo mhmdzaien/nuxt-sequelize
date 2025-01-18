@@ -36,3 +36,8 @@ export type PersistentNodeCacheOptions = {
   opts?: unknown
   serializer?: CacheSerializer
 }
+
+export type KeyVSqliteOptions = {
+  dir?: string
+  table?: string
+}

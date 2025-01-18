@@ -63,7 +63,7 @@ export const revokeToken = (token: string, type: 'access' | 'refresh') => {
     const decodeToken = jwt.verify(token, type === 'access' ? (jwtAccessSecret ?? 'no-key') : (jwtRefreshSecret ?? 'no-key')) as { jwtId: string, exp: number }
     const currentTimestampSecond = Math.floor(Date.now() / 1000)
     const ttl = decodeToken.exp - currentTimestampSecond + 5
-    useStorage('node-cache').setItem(decodeToken.jwtId, 'expired', { ttl: ttl })
+    useStorage('sqlite-cache').setItem(decodeToken.jwtId, 'expired', { ttlSecond: ttl })
   }
   catch (error) {
     console.log(error)
@@ -91,7 +91,7 @@ export const verifyToken = async (
       type === 'access' ? (jwtAccessSecret ?? 'no-key') : (jwtRefreshSecret ?? 'no-key'),
     ) as AccessTokenPayload
     if (import.meta.server) {
-      if (await useStorage('node-cache').hasItem(decodeToken.jwtId)) {
+      if (await useStorage('sqlite-cache').hasItem(decodeToken.jwtId)) {
         throw createError({
           statusCode: 400,
           statusMessage: 'Token tidak valid',
