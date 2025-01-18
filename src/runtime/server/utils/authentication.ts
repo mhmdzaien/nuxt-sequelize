@@ -5,16 +5,17 @@ import { v4 as uuidv4 } from 'uuid'
 import { mySequelizeOptions } from '#my-sequelize-options'
 import { useStorage } from '#imports'
 
-
 export interface AccessTokenPayload {
   jwtId: string
   id: string | number
-  [key: string]: string | number | object
+  role?: string | number | undefined
+  [key: string]: string | number | object | undefined
 }
 
 export type UserPayload = {
   id: string | number
-  [key: string]: string | number | object
+  role?: string | number | undefined
+  [key: string]: string | number | object | undefined
 }
 
 const {
