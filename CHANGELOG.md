@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v1.0.17
+
+[compare changes](https://github.com/mhmdzaien/nuxt-sequelize/compare/v1.0.16...v1.0.17)
+
+### 🏡 Chore
+
+- **release:** V1.0.3 ([59b8a11](https://github.com/mhmdzaien/nuxt-sequelize/commit/59b8a11))
+- **release:** V1.0.9 ([8b18684](https://github.com/mhmdzaien/nuxt-sequelize/commit/8b18684))
+- **release:** V1.0.14 ([b33f7f9](https://github.com/mhmdzaien/nuxt-sequelize/commit/b33f7f9))
+- **release:** V1.0.15 ([57d5d8c](https://github.com/mhmdzaien/nuxt-sequelize/commit/57d5d8c))
+- **release:** V1.0.16 ([d194984](https://github.com/mhmdzaien/nuxt-sequelize/commit/d194984))
+
+### ❤️ Contributors
+
+- Muhammad Zaien <muhammad.zaien17@gmail.com>
+
 ## v1.0.16
 
 [compare changes](https://github.com/mhmdzaien/nuxt-sequelize/compare/v1.0.0-beta.7...v1.0.16)
