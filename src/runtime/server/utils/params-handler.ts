@@ -41,6 +41,14 @@ export const toSequelizeOp = (options: Array<string> | object): object => {
       }),
     )
   }
+  else if (typeof options === 'string') {
+    try {
+      return JSON.parse(options)
+    }
+    catch {
+      return options
+    }
+  }
   return options
 }
 
