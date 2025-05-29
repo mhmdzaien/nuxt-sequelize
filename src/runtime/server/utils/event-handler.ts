@@ -14,6 +14,7 @@ import {
 import type { Sequelize } from 'sequelize'
 import type { ZodIssue } from 'zod'
 import {
+  type UserPayload,
   verifyToken,
   type AccessTokenPayload,
 } from './authentication'
@@ -23,7 +24,7 @@ interface MyH3EventContext extends H3EventContext {
   sequelize: Sequelize
 }
 
-export type AuthorizeRequest = '*' | Array<number>
+export type AuthorizeRequest = '*' | Array<number> | ((currentUser: UserPayload) => boolean)
 export interface MyH3Event<T extends EventHandlerRequest> extends H3Event<T> {
   context: MyH3EventContext
 }
@@ -77,6 +78,12 @@ export const defineMyEventHandler = <T extends EventHandlerRequest, D>(
         throw {
           statusCode: 403,
           message: 'Anda tidak memiliki akse ke fitur ini',
+        }
+      }
+      else if (typeof authorizeRequest === 'function' && !authorizeRequest(decodedToken!)) {
+        throw {
+          statusCode: 403,
+          message: 'Anda tidak memiliki akses ke fitur ini',
         }
       }
       return await handler(event as MyH3Event<T>)

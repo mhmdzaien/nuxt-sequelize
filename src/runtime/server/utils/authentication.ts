@@ -14,7 +14,7 @@ export interface AccessTokenPayload {
 
 export type UserPayload = {
   id: string | number
-  role?: string | number | undefined
+  role?: string | number | undefined | object
   [key: string]: string | number | object | undefined
 }
 
