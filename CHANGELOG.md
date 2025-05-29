@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.0.18
+
+[compare changes](https://github.com/mhmdzaien/nuxt-sequelize/compare/v1.0.17...v1.0.18)
+
+### 🏡 Chore
+
+- **release:** V1.0.17 ([d714dfd](https://github.com/mhmdzaien/nuxt-sequelize/commit/d714dfd))
+
+### ❤️ Contributors
+
+- PC-ELZIEND <muhammad.zaien17@gmail.com>
+
 ## v1.0.17
 
 [compare changes](https://github.com/mhmdzaien/nuxt-sequelize/compare/v1.0.16...v1.0.17)
